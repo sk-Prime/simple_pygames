@@ -13,6 +13,7 @@ class Config():
         self.brightred=(120,70,70)
         self.restrict=False
         self.restrict_zone=(160,200,560,600)
+        self.show_points=True
 cfg=Config()
 
 class Spline():
@@ -43,7 +44,7 @@ class Canvas():
         self.add_button = (20,370,50,20)
         self.del_button = (90,370,50,20)
         self.sel_button = (160,370,50,20)
-        
+        self.hide_button = (230,370,50,20)
         
     def add_points(self,xy):
         self.ctrl_points.append(xy)
@@ -56,17 +57,20 @@ class Canvas():
         if self.selected!=None:
             pygame.draw.rect(self.screen,cfg.bright,self.sel_button)
             pygame.draw.rect(self.screen,cfg.brightred,self.del_button)
+        
+        pygame.draw.rect(self.screen,cfg.dark,self.hide_button)
             
     def render(self):
-        if self.count>=2:
-            pygame.draw.lines(self.screen,(100,100,100),0,self.ctrl_points)
-        for i,point in enumerate(self.ctrl_points):
-            if i==0:
-                pygame.draw.circle(self.screen,(0,140,200),point,5)
-            elif i==self.selected:
-                pygame.draw.circle(self.screen,(20,200,80),point,5)
-            else:
-                pygame.draw.circle(self.screen,(140,140,140),point,5)
+        if cfg.show_points:
+            if self.count>=2:
+                pygame.draw.lines(self.screen,(100,100,100),0,self.ctrl_points)
+            for i,point in enumerate(self.ctrl_points):
+                if i==0:
+                    pygame.draw.circle(self.screen,(0,140,200),point,5)
+                elif i==self.selected:
+                    pygame.draw.circle(self.screen,(20,200,80),point,5)
+                else:
+                    pygame.draw.circle(self.screen,(140,140,140),point,5)
         if self.count>=self.curve.degree+1:
             pygame.draw.lines(self.screen,cfg.color,0,self.curve.draw(self.ctrl_points),width=cfg.width)
         self.button_render()
@@ -85,12 +89,17 @@ class Canvas():
         elif self.region(self.sel_button,x,y):
             self.selected=None
             can_add=False
+        elif self.region(self.hide_button,x,y):
+            cfg.show_points=not cfg.show_points
+            self.selected=None
+            can_add=False
+            
         elif self.region(self.del_button,x,y):
             self.ctrl_points.pop(self.selected)
             self.count-=1
             self.selected=None
             can_add=False
-        elif self.count:
+        elif self.count and cfg.show_points:
             for i,points in enumerate(self.ctrl_points):
                 px,py = points
                 if px-r<x<px+r and py-r<y<py+r:
@@ -98,7 +107,7 @@ class Canvas():
                     self.move_point=True
                     can_add=False
                     break
-        if self.add_mode and can_add:
+        if (self.add_mode and can_add) and cfg.show_points:
             if self.selected!=None:
                 xpoint,_=self.ctrl_points[self.selected]
                 if xpoint>x:
@@ -111,7 +120,7 @@ class Canvas():
         
                     
     def move(self,xy):
-        if self.move_point:
+        if self.move_point and cfg.show_points:
             self.ctrl_points.pop(self.selected)
             self.ctrl_points.insert(self.selected,xy)
             return True
