@@ -1,6 +1,5 @@
 from geomdl import BSpline
 from geomdl import utilities
-from geomdl.visualization import VisMPL
 import pygame,sys
 pygame.init()
 class Config():
@@ -25,7 +24,6 @@ class Spline():
     def draw(self,points):
         self.curve.ctrlpts = points
         self.curve.knotvector = utilities.generate_knot_vector(self.curve.degree, len(self.curve.ctrlpts))
-        self.curve.vis = VisMPL.VisCurve3D()
         return self.curve.evalpts
         
     def set_degree(self,d):
