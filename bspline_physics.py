@@ -1,6 +1,7 @@
 #pylint:disable=W0621
 from geomdl import BSpline
 from geomdl import utilities
+from random import randint
 
 import pymunk
 import pymunk.pygame_util
@@ -37,11 +38,12 @@ class Physics():
             segment.elasticity = 1
             self.space.add(segment)
     
-    def add_circle(self,x,y,r=10):
-        body = pymunk.Body(mass=1, moment=10)
+    def add_circle(self,x,y):
+        body = pymunk.Body(mass=randint(1,10), moment=10)
         body.position = x,y
-        circle = pymunk.Circle(body, radius=r)
-        circle.elasticity = 0.5
+        circle = pymunk.Circle(body, radius=randint(10,50))
+        circle.elasticity = randint(1,9)/10
+        circle.color = (randint(0,255),randint(0,255),randint(0,255),255)
         self.space.add(body,circle)
         
     def run(self):
