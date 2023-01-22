@@ -197,11 +197,10 @@ class Canvas():
             return True
     def simulate(self):
         self.physics.run()
-from gameUtils import Camera
+
 if __name__=="__main__":
     screen = pygame.display.set_mode((500,500))
     canvas = Canvas(screen)
-    camera = Camera(screen)
     def update():
         screen.fill(cfg.fill)
         canvas.simulate()
@@ -221,5 +220,4 @@ if __name__=="__main__":
             elif event.type == pygame.MOUSEMOTION:
                 canvas.move(event.pos)
         update()
-        camera.snap_pointer()
     
